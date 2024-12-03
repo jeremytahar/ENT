@@ -203,9 +203,10 @@ h1 {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 316px;
     border-radius: 22px;
     background-color: #FFF;
+    width: 90%;
+    max-width: 316px;
 }
 
 .form_connexion img {
