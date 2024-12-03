@@ -40,8 +40,94 @@ h6 {
     margin: 0;
 }
 
-/* Navbar */
 nav {
+    position: relative;
+
+    .nav-links {
+        display: none;
+    }
+
+    .nav-links.visible {
+        display: flex;
+        flex-direction: column;
+        font-family: 'TT Norms Pro', sans-serif;
+        font-weight: bold;
+        font-size: 2.25rem;
+        padding: 20px;
+        /* background-color: red; */
+
+        a {
+            text-decoration: none;
+            text-transform: uppercase;
+            color: #181e8f;
+            padding: 20px 0;
+            transition: color 0.3s;
+
+            &:not(:last-child) {
+                border-bottom: 1px solid rgba(24,30,143,0.18);
+            }
+
+            &.active {
+                text-decoration: underline;
+            }
+        }
+    }
+
+    .profile-link {
+        display: none;
+        height: 25px;
+    }
+
+    .profile-link.visible {
+        display: flex;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        right: 5%;
+    }
+
+    .nav-logo-burger {
+        position: relative;
+        width: 100vw;
+        height: 50px;
+
+        .logo {
+            width: 30px;
+            top: 50%;
+            left: 3%;
+            transform: translateY(-50%);
+            position: absolute;
+        }
+
+        .burger-btn {
+            background-color: transparent;
+            border: none;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            right: 3%;
+            height: 20px;
+            margin: auto 0;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+
+            span {
+                display: block;
+                width: 25px;
+                height: 5px;
+                position: relative;
+                background: #181e8f;
+                border-radius: 3px;
+            }
+        }
+    }
+}
+
+
+
+/* Navbar */
+/* nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
