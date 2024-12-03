@@ -1,3 +1,10 @@
+<?php 
+session_start();
+require 'app/model/model.php';
+
+
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -9,15 +16,18 @@
 </head>
 
 <body>
+    <?php if (isLogged()):?>
     <nav>
         <div class="nav-logo-burger">
-            <a href="?action=home" class="logo-link"><img src="public/img/logo.svg" alt="Aller à l'accueil" class="logo"></a>
+            <a href="?action=home" class="logo-link"><img src="public/img/logo.svg" alt="Aller à l'accueil"
+                    class="logo"></a>
             <button class="burger-btn">
                 <span></span>
                 <span></span>
                 <span></span>
             </button>
-            <a href="?action=profile" class="profile-link"><img src="public/img/profile.svg" alt="" class="profile-pic"></a>
+            <a href="?action=profile" class="profile-link"><img src="public/img/profile.svg" alt=""
+                    class="profile-pic"></a>
         </div>
         <div class="nav-links">
             <a href="?action=home">Accueil</a>
@@ -27,10 +37,19 @@
             <a href="?action=directory">Annuaire</a>
         </div>
     </nav>
+    <?php endif; ?>
 
     <?php 
+
+    $action = $_GET['action'] ?? 'login';
+
+    if ($action !== 'login' && !isLogged()) {
+        header('Location: ?action=login');
+        exit;
+    }
+
     
-    switch ($_GET['action'] ?? 'login') {
+    switch ($action) {
         case 'home':
             require 'app/view/home.php';
             break;
@@ -50,7 +69,7 @@
             require 'app/view/profile.php';
             break;
         default:
-            require 'app/view/LogIn.php';
+            require 'app/view/login.php';
             break;
     }
     
