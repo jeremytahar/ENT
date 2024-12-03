@@ -28,6 +28,34 @@
         </div>
     </nav>
 
+    <?php 
+    
+    switch ($_GET['action'] ?? 'login') {
+        case 'home':
+            require 'app/view/home.php';
+            break;
+        case 'dashboard':
+            require 'app/view/dashboard.php';
+            break;
+        case 'calendar':
+            require 'app/view/calendar.php';
+            break;
+        case 'grades':
+            require 'app/view/grades.php';
+            break;
+        case 'directory':
+            require 'app/view/directory.php';
+            break;
+        case 'profile':
+            require 'app/view/profile.php';
+            break;
+        default:
+            require 'app/view/LogIn.php';
+            break;
+    }
+    
+    ?>
+
     <script src="public/scripts/script.js"></script>
 </body>
 
