@@ -1,7 +1,28 @@
-<?php 
+<?php
 session_start();
 require 'app/model/model.php';
 
+$action = $_GET['action'] ?? 'login';
+
+switch ($action) {
+    case 'checkLogin':
+        $login = $_POST['login'];
+        $password = $_POST['password'];
+        login($login, $password);
+        if ($error === null) {
+            header('Location: ?action=home');
+            exit;
+        } else {
+            $_SESSION['login_error'] = $error;
+            header('Location: ?action=login');
+            exit;
+        }
+        break;
+    case 'logout':
+        logout();
+        header('Location: ?action=home');
+        break;
+}
 
 ?>
 
@@ -16,11 +37,11 @@ require 'app/model/model.php';
 </head>
 
 <body>
-    <?php if (isLogged()):?>
+<?php if (isLogged()):?>
     <nav>
+        <a href="?action=home" class="logo-link"><img src="public/img/logo.svg" alt="Aller à l'accueil"
+                class="logo"></a>
         <div class="nav-logo-burger">
-            <a href="?action=home" class="logo-link"><img src="public/img/logo.svg" alt="Aller à l'accueil"
-                    class="logo"></a>
             <button class="burger-btn">
                 <span></span>
                 <span></span>
@@ -28,6 +49,7 @@ require 'app/model/model.php';
             </button>
             <a href="?action=profile" class="profile-link"><img src="public/img/profile.svg" alt=""
                     class="profile-pic"></a>
+            <a href="?action=logout" class="logout-link"><img src="public/img/logout.svg" alt=""></a>
         </div>
         <div class="nav-links">
             <a href="?action=home">Accueil</a>
@@ -39,16 +61,20 @@ require 'app/model/model.php';
     </nav>
     <?php endif; ?>
 
-    <?php 
+    <?php
 
-    $action = $_GET['action'] ?? 'login';
 
     if ($action !== 'login' && !isLogged()) {
         header('Location: ?action=login');
         exit;
     }
 
-    
+    // var_dump($_SESSION);
+    // echo 'Bonjour ' .
+    //     (isset($_SESSION['user_name']) ? $_SESSION['user_name'] : '') . ' ' .
+    //     (isset($_SESSION['user_firstname']) ? $_SESSION['user_firstname'] : '');
+
+
     switch ($action) {
         case 'home':
             require 'app/view/home.php';
@@ -72,7 +98,7 @@ require 'app/model/model.php';
             require 'app/view/login.php';
             break;
     }
-    
+
     ?>
 
     <script src="public/scripts/script.js"></script>

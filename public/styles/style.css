@@ -9,7 +9,7 @@ body {
     font-family: 'Nunito', sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
+    background-color: #EEEDED;
 }
 
 /* Fonts */
@@ -45,59 +45,84 @@ nav {
 
     .nav-links {
         display: none;
-    }
+        height: 100vh;
+        width: 100vw;
+        z-index: 99;
 
-    .nav-links.visible {
-        display: flex;
-        flex-direction: column;
-        font-family: 'TT Norms Pro', sans-serif;
-        font-weight: bold;
-        font-size: 2.25rem;
-        padding: 20px;
-        /* background-color: red; */
+        &.visible {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            font-family: 'TT Norms Pro', sans-serif;
+            font-weight: bold;
+            font-size: 2.25rem;
+            background-color: #EEEDED;
 
-        a {
-            text-decoration: none;
-            text-transform: uppercase;
-            color: #181e8f;
-            padding: 20px 0;
-            transition: color 0.3s;
+            a {
+                text-decoration: none;
+                text-transform: uppercase;
+                color: #181e8f;
+                padding: 20px;
+                transition: color 0.3s;
 
-            &:not(:last-child) {
-                border-bottom: 1px solid rgba(24,30,143,0.18);
-            }
+                &:not(:last-child) {
+                    border-bottom: 1px solid rgba(24, 30, 143, 0.18);
+                }
 
-            &.active {
-                text-decoration: underline;
+                &.active {
+                    text-decoration: underline;
+                }
             }
         }
     }
 
     .profile-link {
         display: none;
-        height: 25px;
+        height: 30px;
+
+        img {
+            height: 100%;
+        }
+
+        &.visible {
+            display: flex;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            right: 5%;
+        }
     }
 
-    .profile-link.visible {
-        display: flex;
-        position: absolute;
+    .logout-link {
+        display: none;
+        height: 27px;
+
+        img {
+            height: 100%;
+        }
+
+        &.visible {
+            display: flex;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            right: 5%;
+        }
+    }
+    
+    .logo {
+        width: 30px;
         top: 50%;
+        left: 15px;
         transform: translateY(-50%);
-        right: 5%;
+        position: absolute;
     }
 
     .nav-logo-burger {
-        position: relative;
-        width: 100vw;
         height: 50px;
-
-        .logo {
-            width: 30px;
-            top: 50%;
-            left: 3%;
-            transform: translateY(-50%);
-            position: absolute;
-        }
 
         .burger-btn {
             background-color: transparent;
@@ -119,64 +144,33 @@ nav {
                 position: relative;
                 background: #181e8f;
                 border-radius: 3px;
-            }
-        }
-    }
-}
-
-
-
-/* Navbar */
-/* nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100vw;
-    margin: 0;
-    padding: 20px;
-
-    .nav-links {
-        display: flex;
-        gap: 50px;
-        align-items: center;
-
-        a {
-            text-decoration: none;
-            font-family: 'TT Norms Pro', sans-serif;
-            color: #181E8F;
-            font-size: 1rem;
-            font-weight: 700;
-            transition: color 0.3s;
-
-            &:hover {
-                text-decoration: underline;
+                transition: all 0.3s ease;
+                transform-origin: center;
             }
 
-        }
-        
-        .active {
-            text-decoration: underline;
-        }
-    }
+            &.active {
+                span:nth-child(1) {
+                    transform: rotate(45deg) translate(5px, 5px);
+                }
 
-    .profile-link {
-        width: 60px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+                span:nth-child(2) {
+                    opacity: 0;
+                }
 
-        .profile-pic {
-            width: 35px;
+                span:nth-child(3) {
+                    transform: rotate(-45deg) translate(5px, -5px);
+                }
+            }
         }
     }
 }
 
 /* Formulaire de connexion */
-
 .connexion_page {
     position: relative;
     text-align: center;
-    font-family: 'TT Norms Pro Bold';
+    font-family: 'TT Norms Pro';
+    font-weight: bold;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -185,138 +179,353 @@ nav {
     background-color: #EEEDED;
     height: 100vh;
     width: 100vw;
-}
 
-h1 {
-    position: relative;
-    bottom: 30px;
-    margin-bottom: 100px;
-    font-size: 1.6rem;
-}
-
-.logo_title img {
-    position: relative;
-    left: 7px;
-    top: 4px;
-    height: 25px;
-    width: 25px;
-}
-
-.form_connexion {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    bottom: 30px;
-    border-radius: 22px;
-    background-color: #FFF;
-    width: 90%;
-    max-width: 316px;
-    -webkit-box-shadow: 0px 0px 3px 0px rgba(0,0,0,0.40);
-    -moz-box-shadow: 0px 0px 3px 0px rgba(0,0,0,0.40);
-    box-shadow: 0px 0px 3px 0px rgba(0,0,0,0.40);
-}
-
-
-
-.form_connexion img {
-    position: relative;
-    left: 7px;
-    top: 4px;
-    height: 25px;
-    width: 25px;
-}
-
-.form_connexion h2 {
-    font-size: 1.8 rem;
-}
-
-.form_connexion input {
-    border: solid 1px #171D8F;
-    border-radius: 6px;
-    width: 90%;
-    height: 25px;
-}
-
-.form_connexion label {
-    font-family: 'TT Norms Pro', sans-serif;
-    font-size: 0.8rem;
-    position: relative;
-    top: 10px;
-    right: 80px;
-    background-color: #FFF;
-    padding: 5px;
-    z-index: 1;
-}
-
-.form_connexion input[type="submit"] {
-    font-family: 'TT Norms Pro Bold';
-    position: relative;
-    bottom: 20px;
-    border-radius: 10px;
-    border: none;
-    background-color: #171D8F;
-    color: white;
-    width: 100px;
-    -webkit-box-shadow: 0px 0px 3px 0px rgba(0,0,0,0.75);
--moz-box-shadow: 0px 0px 3px 0px rgba(0,0,0,0.75);
-box-shadow: 0px 0px 3px 0px rgba(0,0,0,0.75);
-}
-
-.form_connexion a {
-    font-family: 'TT Norms Pro', sans-serif;
-    font-size: 0.6rem;
-    position: relative;
-    bottom: 15px;
-    color: #171D8F;
-}
-
-@media screen and (min-width: 834px) {
-    .connexion_page h1 {
+    h1 {
         position: relative;
-        bottom: 120px;
-        margin-bottom: 100px;
-        font-size: 2rem;
-    }
+        bottom: 85px;
+        font-size: 1.25rem;
 
-    .logo_title img{
-        position: relative;
-        left: 9px;
-        top: 6px;
-        bottom: 4px;
-        height: 35px;
-        width: 35px;
+        .logo_title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            img {
+                position: relative;
+                left: 6px;
+                height: 24px;
+                width: 23px;
+            }
+        }
     }
 
     .form_connexion {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-around;
         position: relative;
-        bottom: 80px;
-        max-width: 437px;
-        height: 90%;
-        max-height: 331px;
+        border-radius: 12px;
+        background-color: #FFF;
+        width: 85%;
+        max-width: 375px;
+        padding: 1.375rem 2rem;
+        box-shadow: 0px 0px 17.5px -3px rgba(0, 0, 0, 0.25);
+
+        h2 {
+            font-size: 1.25rem;
+            margin-bottom: 30px;
+
+            .logo_title {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                img {
+                    position: relative;
+                    left: 6px;
+                    height: 24px;
+                    width: 23px;
+                }
+            }
+        }
+
+        .form-inputs {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            gap: 1rem;
+            margin-bottom: 1rem;
+
+            .form-group {
+                position: relative;
+
+                .eye-icon img {
+                    position: absolute;
+                    right: 0.75rem;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    cursor: pointer;
+                }
+
+                input {
+                    border: solid 1px #181e8f;
+                    border-radius: 10px;
+                    height: 35px;
+                    width: 100%;
+                    padding-inline: 0.75rem;
+
+                    &::placeholder {
+                        opacity: 0;
+                    }
+
+                    &:focus {
+                        /* border: 1px solid #181e8f; */
+                        outline: 1px solid #181e8f;
+                    }
+
+                    &:focus+label {
+                        font-weight: bold;
+                    }
+
+                    &:focus+label,
+                    &:not(:placeholder-shown)+label {
+                        transform: translateY(calc(-50% - 115%));
+                        color: #181e8f;
+                    }
+                }
+
+                label {
+                    font-family: 'TT Norms Pro', sans-serif;
+                    font-weight: normal;
+                    font-size: 0.8rem;
+                    background-color: #FFF;
+                    z-index: 1;
+                    position: absolute;
+                    left: 1.5rem;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    padding-inline: 0.4em;
+                    transition: transform 0.2s;
+                    pointer-events: none;
+                    transform-origin: left;
+                    translate: -0.3em;
+                }
+            }
+        }
+
+        input[type="submit"] {
+            font-family: 'TT Norms Pro';
+            font-weight: bold;
+            position: relative;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+            border-radius: 7px;
+            margin-bottom: 1rem;
+            padding: 0.5625rem 0.75rem;
+            border: none;
+            cursor: pointer;
+            background-color: #171D8F;
+            color: white;
+            box-shadow: 0px 1px 8px 1px rgba(0, 0, 0, 0.25);
+        }
+
+        a {
+            font-family: 'TT Norms Pro', sans-serif;
+            font-weight: normal;
+            font-size: 0.7rem;
+            position: relative;
+            color: #171D8F;
+        }
+    }
+}
+
+@media (min-width: 768px) {
+    nav {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100vw;
+        height: 70px;
+        margin: 0;
+        padding: 20px;
+
+        .logo {
+            width: 40px;
+            left: 20px;
+        }
+
+        .nav-logo-burger {
+            position: absolute;
+            right: 20px;
+            height: fit-content;
+            display: flex;
+            align-items: center;
+            gap: 0px;
+
+            .burger-btn {
+                display: none;
+            }
+
+            .logout-link {
+                display: block;
+            }
+
+            .profile-link {
+                width: fit-content;
+            }
+        }
+
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            align-items: center;
+            height: fit-content;
+            width: fit-content;
+
+            a {
+                text-decoration: none;
+                font-family: 'TT Norms Pro', sans-serif;
+                color: #181E8F;
+                font-size: 0.9rem;
+                font-weight: 700;
+                transition: color 0.3s;
+
+                &:hover {
+                    text-decoration: underline;
+                }
+
+            }
+
+            .active {
+                text-decoration: underline;
+            }
+        }
+
+        .profile-link {
+            width: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            .profile-pic {
+                width: 35px;
+            }
+        }
     }
 
-    .form_connexion h2 {
-        margin-top: 20px;
+    .connexion_page {
+        h1 {
+            font-size: 2rem;
+
+            .logo_title img {
+                width: 37px;
+                height: 35px;
+                left: 10px;
+            }
+        }
+
+        .form_connexion {
+            max-width: 450px;
+            padding: 2rem 3rem;
+
+            h2 {
+                font-size: 1.75rem;
+
+                .logo_title img {
+                    width: 32px;
+                    height: 29px;
+                    left: 9px;
+                }
+            }
+
+            .form-inputs .form-group {
+                label {
+                    font-size: 0.9rem;
+
+                    input:focus+&,
+                    input:not(:placeholder-shown)+& {
+                        transform: translateY(calc(-50% - 100%));
+                    }
+                }
+            }
+
+            input[type="submit"] {
+                font-size: 1rem;
+                padding: 0.65rem 1rem;
+                border-radius: 8px;
+            }
+
+            a {
+                font-size: 0.9rem;
+            }
+        }
     }
+}
 
+@media (min-width: 1024px) {
+    nav {
+        height: 90px;
 
-    .form_connexion input {
-        height: 36px;
-        width: 353px;
-    }
+        .logo {
+            width: 50px;
+            left: 30px;
+        }
 
-    .form_connexion a {
-        margin-bottom: 30px;
-        position: relative;
-        top: 8px;
-    }
+        .nav-logo-burger {
+            gap: 10px;
+            right: 30px;
 
-    .form_connexion input[type="submit"] {
-        width: 117px;
-        height: 33px;
-        position: relative;
-        top: 5px;
+            .burger-btn {
+                display: none;
+            }
+
+            .logout-link {
+                height: 30px;
+            }
+
+            .profile-link {
+                height: 35px;
+            }
+        }
+
+        .nav-links {
+            gap: 50px;
+
+            a {
+                font-size: 1rem;
+            }
+        }
+    } 
+    
+    .connexion_page {
+        h1 {
+            font-size: 2.25rem;
+
+            .logo_title img {
+                height: 40px;
+                width: 38px;
+            }
+        }
+
+        .form_connexion {
+            max-width: 500px;
+            padding: 3rem 4rem;
+
+            h2 {
+                font-size: 1.8rem;
+
+                .logo_title img {
+                    width: 30px;
+                    height: 30px;
+                }
+            }
+
+            .form-inputs .form-group {
+                input {
+                    height: 45px;
+                }
+
+                label {
+                    font-size: 1rem;
+
+                    input:focus+&,
+                    input:not(:placeholder-shown)+& {
+                        transform: translateY(calc(-50% - 120%));
+                    }
+                }
+            }
+
+            input[type="submit"] {
+                font-size: 1rem;
+                padding: 0.75rem 1.25rem;
+                border-radius: 10px;
+            }
+
+            a {
+                font-size: 1rem;
+            }
+        }
     }
 }
