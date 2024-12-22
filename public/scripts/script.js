@@ -67,10 +67,10 @@ function init() {
     handlePopState();
 }
 
-// Lancement
+// Appel de la fonction d'initialisation des fonctionnalités
 document.addEventListener('DOMContentLoaded', init);
 
-
+// Fonction pour gérer la visibilité du mot de passe
 function togglePasswordVisibility(passwordId, iconId) {
     const passwordField = document.getElementById(passwordId);
     const icon = document.getElementById(iconId);
@@ -86,6 +86,7 @@ function togglePasswordVisibility(passwordId, iconId) {
     });
 }
 
+// Initialisation des fonctionnalités de mot de passe
 function initPasswordFeatures() {
     const passwordFields = document.querySelectorAll('[type="password"]');
     passwordFields.forEach(passwordField => {
@@ -96,7 +97,49 @@ function initPasswordFeatures() {
     });
 }
 
+// Appel de la fonction d'initialisation des fonctionnalités de mot de passe
 document.addEventListener('DOMContentLoaded', initPasswordFeatures);
 
+// Fonction pour gérer la recherche
+function setupSearch(inputSelector, itemSelector, messageSelector, getSearchText = (item) => item.textContent) {
+    const input = document.querySelector(inputSelector);
+    const items = document.querySelectorAll(itemSelector);
+    const noResultsMessage = document.querySelector(messageSelector);
+
+    if (!input || !items || !noResultsMessage) {
+        console.warn('Un ou plusieurs sélecteurs sont invalides.');
+        return;
+    }
+
+    // Fonction pour retirer les accents
+    const removeAccents = (str) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+    input.addEventListener('input', () => {
+        const searchValue = removeAccents(input.value.toLowerCase());
+        let hasVisibleItem = false;
+
+        items.forEach(item => {
+            const itemText = removeAccents(getSearchText(item).toLowerCase());
+            if (itemText.includes(searchValue)) {
+                item.style.display = ''; 
+                hasVisibleItem = true;
+            } else {
+                item.style.display = 'none';
+            }
+        });
+
+        noResultsMessage.style.display = hasVisibleItem ? 'none' : 'block';
+    });
+}
+
+// Appel de la fonction de recherche
+document.addEventListener('DOMContentLoaded', () => {
+    setupSearch(
+        '#searchInput', 
+        '.teacher',     
+        '#noResults',   
+        (item) => item.querySelector('h2').textContent 
+    );
+});
 
 
