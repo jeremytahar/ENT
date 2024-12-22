@@ -48,6 +48,148 @@ function logout() {
     session_destroy();
 }
 
+function makeCurlRequest($url, $body) {
+    // Initialisation de cURL
+    $ch = curl_init();
+    
+    // Définir l'URL de la requête
+    curl_setopt($ch, CURLOPT_URL, $url);
+    
+    // Définir que la réponse sera retournée sous forme de chaîne
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    
+    // Définir le type de la requête (POST dans ce cas)
+    curl_setopt($ch, CURLOPT_POST, true);
+    
+    // Définir les données du corps de la requête
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($body));
+    
+    // Définir le type de contenu de la requête
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Content-Type: application/json',
+    ]);
+
+    // Désactiver la vérification du certificat SSL (non recommandé en production)
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+
+    // Exécuter la requête
+    $response = curl_exec($ch);
+    
+    // Vérification des erreurs cURL
+    if (curl_errno($ch)) {
+        echo 'Erreur cURL: ' . curl_error($ch);
+    }
+    
+    // Fermer la session cURL
+    curl_close($ch);
+    
+    return $response;
+}
+
+function getHomeworks($studentId) {
+    try {
+        $db = dbConnect();
+        $query = "
+            SELECT d.id_devoir, d.titre, d.description, d.date_limite, d.id_module, m.titre AS module_titre
+            FROM devoir d
+            INNER JOIN devoir_etudiant de ON d.id_devoir = de.id_devoir
+            INNER JOIN module m ON d.id_module = m.id_module
+            WHERE de.id_etudiant = :studentId
+            ORDER BY d.date_limite ASC
+            LIMIT 3
+        ";
+
+        // Préparation de la requête
+        $stmt = $db->prepare($query);
+        $stmt->bindParam(':studentId', $studentId, PDO::PARAM_INT);
+
+        // Exécution de la requête
+        $stmt->execute();
+
+        // Récupération des résultats
+        $homeworks = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return $homeworks;
+    } catch (PDOException $e) {
+        // Gestion des erreurs
+        die("Erreur : " . $e->getMessage());
+    }
+}
+
+// Fonction pour récupérer les absences d'un étudiant
+function getAbsences($studentId) {
+    try {
+        $db = dbConnect();
+        $query = "
+            SELECT 
+                a.id_absence, 
+                a.date AS date_absence, 
+                a.debut AS heure_debut, 
+                a.fin AS heure_fin, 
+                a.duree, 
+                a.motif
+            FROM absence a
+            WHERE a.id_etudiant = :studentId
+            ORDER BY a.date DESC, a.debut DESC
+            LIMIT 3
+        ";
+
+        $stmt = $db->prepare($query);
+        $stmt->bindParam(':studentId', $studentId, PDO::PARAM_INT);
+        $stmt->execute();
+        $absences = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return $absences;
+    } catch (PDOException $e) {
+        die("Erreur : " . $e->getMessage());
+    }
+}
+
+// Fonction pour récupérer les notes d'un étudiant
+function getGrades($studentId) {
+    try {
+        $db = dbConnect();
+        $query = "
+        SELECT 
+            n.id_note, 
+            n.date_note, 
+            n.note, 
+            n.note_max, 
+            n.titre, 
+            m.titre AS module_titre
+        FROM note n
+        JOIN module m ON n.id_module = m.id_module
+        WHERE n.id_etudiant = :studentId
+        ORDER BY n.date_note DESC
+        LIMIT 3
+        ";
+        $stmt = $db->prepare($query);
+        $stmt->bindParam(':studentId', $studentId, PDO::PARAM_INT);
+        $stmt->execute();
+        $grades = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return $grades;
+    } catch (PDOException $e) {
+        die("Erreur : " . $e->getMessage());
+    }
+}
+
+// Fonction pour récupérer les infos des profs pour l'annuaire
+function getTeachers() {
+    try {
+        $db = dbConnect();
+        $query = "
+            SELECT id_professeur, nom, prenom, email, discord
+            FROM professeur
+            ";
+        $stmt = $db->prepare($query);
+        $stmt->execute();
+        $teachers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $teachers;
+    } catch (PDOException $e) {
+        die("Erreur : " . $e->getMessage());
+    }
+}
 
 
 ?>
