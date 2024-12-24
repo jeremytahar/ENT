@@ -121,7 +121,7 @@ function setupSearch(inputSelector, itemSelector, messageSelector, getSearchText
         items.forEach(item => {
             const itemText = removeAccents(getSearchText(item).toLowerCase());
             if (itemText.includes(searchValue)) {
-                item.style.display = ''; 
+                item.style.display = '';
                 hasVisibleItem = true;
             } else {
                 item.style.display = 'none';
@@ -132,13 +132,23 @@ function setupSearch(inputSelector, itemSelector, messageSelector, getSearchText
     });
 }
 
-// Appel de la fonction de recherche
+// Appel de la fonction de recherche pour les professeurs
 document.addEventListener('DOMContentLoaded', () => {
     setupSearch(
-        '#searchInput', 
-        '.teacher',     
-        '#noResults',   
-        (item) => item.querySelector('h2').textContent 
+        '#searchInput',
+        '.teacher',
+        '#noResults',
+        (item) => item.querySelector('h2').textContent
+    );
+});
+
+// Appel de la fonction de recherche pour les modules
+document.addEventListener('DOMContentLoaded', () => {
+    setupSearch(
+        '#searchInput',
+        '.course',
+        '#noResults',
+        (item) => item.querySelector('h2').textContent
     );
 });
 

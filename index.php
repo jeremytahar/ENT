@@ -61,11 +61,14 @@ switch ($action) {
             <a href="?action=home" class="logo-link"><img src="public/img/logo.svg" alt="Aller à l'accueil"
                     class="logo"></a>
             <div class="nav-logo-burger">
-                <button class="burger-btn">
+                <!-- <button class="burger-btn">
                     <span></span>
                     <span></span>
                     <span></span>
-                </button>
+                </button> -->
+                <div class="burger-btn">
+                    <span></span>
+                </div>
                 <a href="?action=profile" class="profile-link"><img src="public/img/profile.svg" alt=""
                         class="profile-pic"></a>
                 <a href="?action=logout" class="logout-link"><img src="public/img/logout.svg" alt=""></a>
@@ -91,13 +94,16 @@ switch ($action) {
     switch ($action) {
         case 'home':
             if (isset($_SESSION['user_id']) && $_SESSION['user_role'] === 'etudiant') {
-                $homeworks = getHomeworks($_SESSION['user_id']);
+                $homeworks = getLatestHomeworks($_SESSION['user_id']);
                 $absences = getAbsences($_SESSION['user_id']);
                 $grades = getGrades($_SESSION['user_id']);
             }
             require 'app/view/home.php';
             break;
         case 'dashboard':
+            $homeworks = getStudentsHomeworks($_SESSION['user_id']);
+            $tests = getTests($_SESSION['user_id']);
+            $courses = getCourses();
             require 'app/view/dashboard.php';
             break;
         case 'calendar':
@@ -113,6 +119,13 @@ switch ($action) {
         case 'profile':
             require 'app/view/profile.php';
             break;
+        case 'course':
+            $courseId = $_GET['course_id'];
+            $course = getCourse($courseId);
+            $courseFiles = getCourseFiles($courseId);
+            $courseHomeworks = getCourseHomeworks($courseId);
+            require 'app/view/course.php';
+            break;
         default:
             if (isLogged()) {
                 require 'app/view/home.php';
@@ -123,6 +136,10 @@ switch ($action) {
     }
 
     ?>
+
+    <footer>
+        <a href="?action=home"><img src="public/img/logo.svg" alt=""></a>
+    </footer>
 
     <script src="public/scripts/script.js"></script>
 </body>

@@ -1,6 +1,7 @@
-<?php 
+<?php
 
-function dbConnect() {
+function dbConnect()
+{
     try {
         $db = new PDO('mysql:host=localhost;dbname=ent;charset=utf8', 'root', '');
         return $db;
@@ -10,11 +11,13 @@ function dbConnect() {
     }
 }
 
-function isLogged() {
+function isLogged()
+{
     return isset($_SESSION['user_id']);
 }
 
-function login($login, $password) {
+function login($login, $password)
+{
     $db = dbConnect();
 
     // Vérifier dans la table `etudiant`
@@ -43,27 +46,29 @@ function login($login, $password) {
 }
 
 
-function logout() {
+function logout()
+{
     session_unset();
     session_destroy();
 }
 
-function makeCurlRequest($url, $body) {
+function makeCurlRequest($url, $body)
+{
     // Initialisation de cURL
     $ch = curl_init();
-    
+
     // Définir l'URL de la requête
     curl_setopt($ch, CURLOPT_URL, $url);
-    
+
     // Définir que la réponse sera retournée sous forme de chaîne
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    
+
     // Définir le type de la requête (POST dans ce cas)
     curl_setopt($ch, CURLOPT_POST, true);
-    
+
     // Définir les données du corps de la requête
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($body));
-    
+
     // Définir le type de contenu de la requête
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
         'Content-Type: application/json',
@@ -74,28 +79,35 @@ function makeCurlRequest($url, $body) {
 
     // Exécuter la requête
     $response = curl_exec($ch);
-    
+
     // Vérification des erreurs cURL
     if (curl_errno($ch)) {
         echo 'Erreur cURL: ' . curl_error($ch);
     }
-    
+
     // Fermer la session cURL
     curl_close($ch);
-    
+
     return $response;
 }
 
-function getHomeworks($studentId) {
+// Fonction pour récupérer les devoirs les plus récents d'un étudiant
+function getLatestHomeworks($studentId)
+{
     try {
         $db = dbConnect();
         $query = "
-            SELECT d.id_devoir, d.titre, d.description, d.date_limite, d.id_module, m.titre AS module_titre
+            SELECT 
+            d.id_devoir, 
+            d.titre, 
+            d.date, 
+            d.id_module, 
+            m.titre AS module_titre
             FROM devoir d
             INNER JOIN devoir_etudiant de ON d.id_devoir = de.id_devoir
             INNER JOIN module m ON d.id_module = m.id_module
-            WHERE de.id_etudiant = :studentId
-            ORDER BY d.date_limite ASC
+            WHERE de.id_etudiant = :studentId AND d.type = 'depot'
+            ORDER BY d.date ASC
             LIMIT 3
         ";
 
@@ -116,8 +128,102 @@ function getHomeworks($studentId) {
     }
 }
 
+// Fonction pour récupérer les devoirs d'un étudiant
+function getStudentsHomeworks($studentId)
+{
+    try {
+        $db = dbConnect();
+        $query = "
+            SELECT 
+            d.id_devoir, 
+            d.titre, 
+            d.date, 
+            d.id_module, 
+            m.titre AS module_titre
+            FROM devoir d
+            INNER JOIN devoir_etudiant de ON d.id_devoir = de.id_devoir
+            INNER JOIN module m ON d.id_module = m.id_module
+            WHERE de.id_etudiant = :studentId AND d.type = 'depot'
+            ORDER BY d.date ASC
+        ";
+
+        // Préparation de la requête
+        $stmt = $db->prepare($query);
+        $stmt->bindParam(':studentId', $studentId, PDO::PARAM_INT);
+
+        // Exécution de la requête
+        $stmt->execute();
+
+        // Récupération des résultats
+        $homeworks = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return $homeworks;
+    } catch (PDOException $e) {
+        // Gestion des erreurs
+        die("Erreur : " . $e->getMessage());
+    }
+}
+
+// Fonction pour récupérer les devoirs par module 
+function getCourseHomeworks($courseId)
+{
+    try {
+        $db = dbConnect();
+        $query = "
+        SELECT
+            d.id_devoir,
+            d.titre,
+            d.date,
+            d.id_module,
+            m.titre AS module_titre
+        FROM devoir d
+        INNER JOIN module m ON d.id_module = m.id_module
+        WHERE d.id_module = :courseId AND d.type = 'depot'
+        ORDER BY d.date ASC
+        ";
+        $stmt = $db->prepare($query);
+        $stmt->bindParam(':courseId', $courseId, PDO::PARAM_INT);
+        $stmt->execute();
+        $homeworks = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $homeworks;
+    } catch (PDOException $e) {
+        die("Erreur : " . $e->getMessage());
+    }
+}
+
+// Fonction pour récupérer les évaluations d'un étudiant
+function getTests($studentId)
+{
+    try {
+        $db = dbConnect();
+        $query = "
+            SELECT 
+            d.id_devoir, 
+            d.titre, 
+            d.date, 
+            d.id_module, 
+            m.titre AS module_titre
+            FROM devoir d
+            INNER JOIN devoir_etudiant de ON d.id_devoir = de.id_devoir
+            INNER JOIN module m ON d.id_module = m.id_module
+            WHERE de.id_etudiant = :studentId AND d.type = 'evaluation'
+            ORDER BY d.date ASC
+        ";
+
+        $stmt = $db->prepare($query);
+        $stmt->bindParam(':studentId', $studentId, PDO::PARAM_INT);
+        $stmt->execute();
+        $tests = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return $tests;
+    } catch (PDOException $e) {
+        die("Erreur : " . $e->getMessage());
+    }
+}
+
 // Fonction pour récupérer les absences d'un étudiant
-function getAbsences($studentId) {
+function getAbsences($studentId)
+{
     try {
         $db = dbConnect();
         $query = "
@@ -146,7 +252,8 @@ function getAbsences($studentId) {
 }
 
 // Fonction pour récupérer les notes d'un étudiant
-function getGrades($studentId) {
+function getGrades($studentId)
+{
     try {
         $db = dbConnect();
         $query = "
@@ -175,11 +282,17 @@ function getGrades($studentId) {
 }
 
 // Fonction pour récupérer les infos des profs pour l'annuaire
-function getTeachers() {
+function getTeachers()
+{
     try {
         $db = dbConnect();
         $query = "
-            SELECT id_professeur, nom, prenom, email, discord
+            SELECT 
+            id_professeur, 
+            nom, 
+            prenom, 
+            email, 
+            discord
             FROM professeur
             ";
         $stmt = $db->prepare($query);
@@ -191,5 +304,71 @@ function getTeachers() {
     }
 }
 
+// Fonction pour récupérer tous les modules
+function getCourses()
+{
+    try {
+        $db = dbConnect();
+        $query = "
+            SELECT 
+            id_module, 
+            titre, 
+            id_professeur
+            FROM module
+            ";
+        $stmt = $db->prepare($query);
+        $stmt->execute();
+        $modules = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $modules;
+    } catch (PDOException $e) {
+        die("Erreur : " . $e->getMessage());
+    }
+}
 
-?>
+// Fonction pour récupérer les infos d'un module
+function getCourse($id)
+{
+    try {
+        $db = dbConnect();
+        $query = "
+        SELECT 
+            m.id_module, 
+            m.titre, 
+            m.id_professeur,
+            p.nom AS prof_nom,
+            p.prenom AS prof_prenom
+        FROM module m
+        JOIN professeur p ON m.id_professeur = p.id_professeur
+        WHERE id_module = :id
+        ";
+        $stmt = $db->prepare($query);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        $module = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $module;
+    } catch (PDOException $e) {
+        die("Erreur : " . $e->getMessage());
+    }
+}
+
+// Fonction pour récupérer les fichiers d'un cours
+function getCourseFiles($id)
+{
+    try {
+        $db = dbConnect();
+        $query = "
+        SELECT 
+            id_cours, 
+            nom_fichier
+        FROM cours_module
+        WHERE id_module = :id
+        ";
+        $stmt = $db->prepare($query);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        $files = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $files;
+    } catch (PDOException $e) {
+        die("Erreur : " . $e->getMessage());
+    }
+}
