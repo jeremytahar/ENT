@@ -132,24 +132,25 @@ function setupSearch(inputSelector, itemSelector, messageSelector, getSearchText
     });
 }
 
-// Appel de la fonction de recherche pour les professeurs
 document.addEventListener('DOMContentLoaded', () => {
-    setupSearch(
-        '#searchInput',
-        '.teacher',
-        '#noResults',
-        (item) => item.querySelector('h2').textContent
-    );
-});
+    // Recherche pour les professeurs (uniquement si des professeurs existent sur la page)
+    if (document.querySelector('.teacher')) {
+        setupSearch(
+            '#searchInput',
+            '.teacher',
+            '.noResults',
+            (item) => item.querySelector('h2').textContent
+        );
+    }
 
-// Appel de la fonction de recherche pour les modules
-document.addEventListener('DOMContentLoaded', () => {
-    setupSearch(
-        '#searchInput',
-        '.course',
-        '#noResults',
-        (item) => item.querySelector('h2').textContent
-    );
+    // Recherche pour les modules (uniquement si des modules existent sur la page)
+    if (document.querySelector('.course')) {
+        setupSearch(
+            '#searchInput',
+            '.course',
+            '.noResults',
+            (item) => item.querySelector('h2').textContent
+        );
+    }
 });
-
 

@@ -43,7 +43,7 @@
             <label for="searchInput">Rechercher un module</label><br>
         </div>
     </div>
-    <p id="noResults" style="display: none; font-weight: bold; text-align: center;">Aucun module trouvé.</p>
+    <p class="noResults" style="display: none; font-weight: bold; text-align: center;">Aucun module trouvé.</p>
     <div class="courses">
         <?php foreach ($courses as $course): ?>
         <div class="course">

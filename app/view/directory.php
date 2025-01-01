@@ -5,7 +5,7 @@
             <label for="searchInput">Rechercher un professeur</label><br>
         </div>
     </div>
-    <p id="noResults" style="display: none; font-weight: bold; text-align: center;">Aucun professeur trouvé.</p>
+    <p class="noResults" style="display: none; font-weight: bold; text-align: center;">Aucun professeur trouvé.</p>
     <div class="teachers">
         <?php foreach ($teachers as $teacher): ?>
             <div class="teacher">
