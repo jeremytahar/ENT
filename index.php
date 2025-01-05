@@ -9,6 +9,7 @@ switch ($action) {
         $login = $_POST['login'];
         $password = $_POST['password'];
         login($login, $password);
+        $error = $_SESSION['login_error'] ?? null;
         if ($error === null) {
             header('Location: ?action=home');
             exit;
@@ -40,6 +41,29 @@ switch ($action) {
             ]
         ];
         $response = makeCurlRequest($url, $body);
+        break;
+        case 'updateProfilePicture':
+            if (isset($_FILES['profile-picture'])) {
+                
+                $result = updateProfilePicture($_FILES['profile-picture'], $_SESSION['role'], $_SESSION['user_id']);
+                
+                if ($result === true) {
+                    header('Location: index.php?action=profile');
+                } else {
+                    header('Location: index.php?action=profile&error=' . urlencode($result));
+                }
+            } else {
+                header('Location: index.php?action=profile&error=' . urlencode("Aucun fichier sélectionné ou une erreur s'est produite."));
+            }
+            exit;
+            break;
+        
+}
+
+
+if ($action !== 'login' && !isLogged()) {
+    header('Location: ?action=login');
+    exit;
 }
 
 ?>
@@ -85,18 +109,12 @@ switch ($action) {
 
     <?php
 
-
-    if ($action !== 'login' && !isLogged()) {
-        header('Location: ?action=login');
-        exit;
-    }
-
     switch ($action) {
         case 'home':
             if (isset($_SESSION['user_id']) && $_SESSION['user_role'] === 'etudiant') {
                 $homeworks = getLatestHomeworks($_SESSION['user_id']);
                 $absences = getAbsences($_SESSION['user_id']);
-                $grades = getGrades($_SESSION['user_id']);
+                $grades = getLatestGrades($_SESSION['user_id']);
             }
             require 'app/view/home.php';
             break;
@@ -110,6 +128,7 @@ switch ($action) {
             require 'app/view/calendar.php';
             break;
         case 'grades':
+            $grades = getGrades($_SESSION['user_id']);
             require 'app/view/grades.php';
             break;
         case 'directory':
@@ -117,6 +136,8 @@ switch ($action) {
             require 'app/view/directory.php';
             break;
         case 'profile':
+            $user = getUser($_SESSION['user_id']);
+            $absences = getAbsences($_SESSION['user_id']);
             require 'app/view/profile.php';
             break;
         case 'course':

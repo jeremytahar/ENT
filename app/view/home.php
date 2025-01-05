@@ -1,4 +1,4 @@
-<div class="homepage">
+<main class="homepage">
     <div class="header-welcome">
         bonjour, <?= $_SESSION['user_firstname'] ?>
     </div>
@@ -9,42 +9,42 @@
                 <hr>
 
                 <div class="homework-items">
-                    <?php
-                    if (!empty($homeworks)) {
-                        foreach ($homeworks as $homework) {
-                            echo '<div class="homework-item">';
-                            echo '<a href="?action=course&course_id=' . $homework['id_module'] . '"><img src="public/img/folder.svg">' . $homework['titre'] . '</a>';
-                            echo '</div>';
-                        }
-                    } else {
-                        echo '<p>Aucun devoir à rendre pour le moment.</p>';
-                    }
-                    ?>
+                    <?php if (!empty($homeworks)): ?>
+                        <?php foreach ($homeworks as $homework): ?>
+                            <div class="homework-item">
+                                <a href="?action=course&course_id=<?= $homework['id_module'] ?>">
+                                    <img src="public/img/folder.svg">
+                                    <?= htmlspecialchars($homework['titre']) ?>
+                                </a>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <p>Aucun devoir à rendre pour le moment.</p>
+                    <?php endif; ?>
+
                 </div>
                 <a class="seemore-btn" href="?action=dashboard">Voir plus</a>
             </div>
             <div class="absences">
                 <h2>Absences</h2>
                 <hr>
-                <?php
-                if (!empty($absences)) {
-                    foreach ($absences as $absence) {
-                        echo '<div class="absence-item">';
-                        echo '<p>' . date('d/m/Y', strtotime($absence['date_absence'])) . '</p>';
-                        echo '<p>' . $absence['heure_debut'] . ' - ' . $absence['heure_fin'] . '</p>';
-                        echo '</div>';
-                    }
-                } else {
-                    echo '<p>Aucune absence.</p>';
-                }
-                ?>
+                <?php if (!empty($absences)): ?>
+                    <?php foreach ($absences as $absence): ?>
+                        <div class="absence-item">
+                            <?= date('d/m/Y', strtotime($absence['date_absence'])) ?> de
+                            <?= date('H:s', strtotime($absence['heure_debut'])) ?> à <?= date('H:s', strtotime($absence['heure_fin'])) ?></p>
+                        </div>
+                    <?php endforeach; ?>
+                <?php else : ?>
+                    <p>Aucune absence.</p>
+                <?php endif; ?>
                 <a class="seemore-btn" href="?action=profile">Voir plus</a>
             </div>
         </div>
     <?php endif; ?>
-    <!-- <div class="homepage-calendar"> -->
-    <img src="public/img/calendar.svg" alt="" class="calendar-img">
-    <!-- </div> -->
+    <img src="public/img/calendar-mobile.svg" alt="" class="calendar-img calendar-mobile">
+    <img src="public/img/calendar-tablet.svg" alt="" class="calendar-img calendar-tablet">
+    <img src="public/img/calendar-desktop.svg" alt="" class="calendar-img calendar-desktop">
     <div class="homepage-grades">
         <h2>Dernières notes</h2>
         <table>
@@ -57,23 +57,32 @@
                 </tr>
             </thead>
             <tbody>
-                <?php
-                if (!empty($grades)) {
-                    foreach ($grades as $grade) {
-                        echo '<tr>';
-                        echo '<td>' . htmlspecialchars($grade['module_titre']) . '</td>';
-                        echo '<td>' . htmlspecialchars($grade['titre']) . '</td>';
-                        echo '<td>' . htmlspecialchars(date("d/m/Y", strtotime($grade['date_note']))) . '</td>';
-                        echo '<td><strong>' . htmlspecialchars($grade['note']) . '/' . htmlspecialchars($grade['note_max']) . '</strong></td>';
-                        echo '</tr>';
-                    }
-                } else {
-                    echo '<tr><td colspan="4">Aucune note disponible.</td></tr>';
-                }
+                <?php if (!empty($grades)): ?>
+                    <?php foreach ($grades as $grade): ?>
+                        <tr>
+                            <td>
+                                <?= htmlspecialchars($grade['module_titre']) ?>
+                            </td>
+                            <td>
+                                <?= htmlspecialchars($grade['titre']) ?>
+                            </td>
+                            <td>
+                                <?= htmlspecialchars(date("d/m/Y", strtotime($grade['date_note']))) ?>
+                            </td>
+                            <td>
+                                <strong> <?= htmlspecialchars($grade['note']) ?> / <?= htmlspecialchars($grade['note_max']) ?> </strong>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="4">Aucune note disponible.</td>
+                    </tr>
+                <?php endif;
                 ?>
             </tbody>
         </table>
-        <button class="view-more">Voir plus</button>
+        <a href="?action=grades" class="view-more">Voir plus</a>
     </div>
 
-</div>
+</main>

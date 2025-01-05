@@ -1,4 +1,8 @@
-<div class="dashboard-page">
+<main class="dashboard-page">
+    <div class="breadcrumb">
+        <a href="?action=home">Accueil</a> > <span>Tableau de bord</span>
+    </div>
+    </div>
     <div class="homework-tests">
         <div class="homework">
             <h2>Devoirs à rendre</h2>
@@ -57,4 +61,4 @@
         </div>
         <?php endforeach; ?>
     </div>
-</div>
+</main>

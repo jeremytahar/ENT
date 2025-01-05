@@ -1,4 +1,7 @@
 <div class="directory-page">
+    <div class="breadcrumb">
+        <a href="?action=home">Accueil</a> > <span>Annuaire</span>
+    </div>
     <div class="search-teachers">
         <div class="form-group">
             <input type="text" class="search-bar" id="searchInput" placeholder="Rechercher" />

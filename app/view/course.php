@@ -1,4 +1,7 @@
-<div class="course-page">
+<main class="course-page">
+    <div class="breadcrumb">
+        <a href="?action=home">Accueil</a> > <a href="?action=dashboard">Tableau de bord</a> > <span><?= $course['titre'] ?></span>
+    </div>
     <div class="course">
         <div class="course-header">
             <div class="course-infos">
@@ -10,37 +13,41 @@
 
         <div class="course-deposit">
             <h2>Zones de dépot</h2>
-            <?php if (!empty($courseHomeworks)): ?>
-                <?php foreach ($courseHomeworks as $homework): ?>
-                    <div class="homework-item">
-                        <?php $formattedDate = date("d/m/Y, H:i", strtotime($homework['date'])); ?>
-                        <h3><?= $homework['titre'] ?></h3>
-                        <span class="date">Pour le <?= $formattedDate ?></span>
-                        <div class="homework-deposit">
-                            <div class="deposit-header">
-                                <img src="public/img/folder-blue.svg" alt="">
-                                <span>Poids maximal: 1 Go</span>
+            
+            
+            <div class="homework-items">
+                <?php if (!empty($courseHomeworks)): ?>
+                    <?php foreach ($courseHomeworks as $homework): ?>
+                        <div class="homework-item">
+                            <?php $formattedDate = date("d/m/Y, H:i", strtotime($homework['date'])); ?>
+                            <h3><?= $homework['titre'] ?></h3>
+                            <span class="date">Pour le <?= $formattedDate ?></span>
+                            <div class="homework-deposit">
+                                <div class="deposit-header">
+                                    <img src="public/img/folder-blue.svg" alt="">
+                                    <span>Poids maximal: 1 Go</span>
+                                </div>
+                                <div class="deposit-zone">
+                                    <div class="drop-icon"><img src="public/img/upload.svg" alt=""></div>
+                                    <p>Vous pouvez glisser des fichiers ici pour les ajouter</p>
+                                    <input type="file" id="file-input" class="file-input" multiple hidden>
+                                </div>
+                                <div class="file-list" id="file-list"></div>
                             </div>
-                            <div class="deposit-zone">
-                                <div class="drop-icon"><img src="public/img/upload.svg" alt=""></div>
-                                <p>Vous pouvez glisser des fichiers ici pour les ajouter</p>
-                                <input type="file" id="file-input" class="file-input" multiple hidden>
-                            </div>
-                            <div class="file-list" id="file-list"></div>
+                            <button>Enregistrer</button>
                         </div>
-                        <button>Enregistrer</button>
-                    </div>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <p>Aucun devoir à rendre.</p>
-            <?php endif; ?>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p>Aucun devoir à rendre.</p>
+                <?php endif; ?>
+            </div>
         </div>
     </div>
 
     <div class="course-files">
         <?php if (!empty($courseFiles)): ?>
         <div class="files">
-            <h2>Cours et TP</h2>
+            <h3>Cours et TP</h3>
             <?php foreach ($courseFiles as $file): ?>
                 <div class="file">
                     <img src="public/img/file.svg" alt="">

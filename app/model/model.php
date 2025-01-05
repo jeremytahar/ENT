@@ -2,13 +2,7 @@
 
 function dbConnect()
 {
-    try {
-        $db = new PDO('mysql:host=localhost;dbname=ent;charset=utf8', 'root', '');
-        return $db;
-    } catch (PDOException $e) {
-        print "Erreur !: " . $e->getMessage() . "<br/>";
-        die();
-    }
+    return require 'app/config/dbconnect.php';
 }
 
 function isLogged()
@@ -20,19 +14,16 @@ function login($login, $password)
 {
     $db = dbConnect();
 
-    // Vérifier dans la table `etudiant`
-    $query = $db->prepare('SELECT id_etudiant AS id, nom AS name, prenom AS firstname, login AS login, password AS password, role FROM etudiant WHERE login = :login');
+    $query = $db->prepare('SELECT id AS id, nom AS name, prenom AS firstname, login AS login, password AS password, role FROM etudiant WHERE login = :login');
     $query->execute(['login' => $login]);
     $user = $query->fetch();
 
-    // Si l'utilisateur n'est pas trouvé dans `etudiant`, vérifier dans `professeur`
     if (!$user) {
-        $query = $db->prepare('SELECT id_professeur AS id, nom AS name, prenom AS firstname, login AS login, password AS password, role FROM professeur WHERE login = :login');
+        $query = $db->prepare('SELECT id AS id, nom AS name, prenom AS firstname, login AS login, password AS password, role FROM professeur WHERE login = :login');
         $query->execute(['login' => $login]);
         $user = $query->fetch();
     }
 
-    // Vérification du mot de passe et initialisation de la session si succès
     if ($user && password_verify($password, $user['password'])) {
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['user_name'] = $user['name'];
@@ -42,7 +33,7 @@ function login($login, $password)
         return true;
     }
 
-    return false; // Échec de connexion
+    return false; 
 }
 
 
@@ -54,38 +45,28 @@ function logout()
 
 function makeCurlRequest($url, $body)
 {
-    // Initialisation de cURL
     $ch = curl_init();
 
-    // Définir l'URL de la requête
     curl_setopt($ch, CURLOPT_URL, $url);
 
-    // Définir que la réponse sera retournée sous forme de chaîne
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-    // Définir le type de la requête (POST dans ce cas)
     curl_setopt($ch, CURLOPT_POST, true);
 
-    // Définir les données du corps de la requête
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($body));
 
-    // Définir le type de contenu de la requête
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
         'Content-Type: application/json',
     ]);
 
-    // Désactiver la vérification du certificat SSL (non recommandé en production)
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
-    // Exécuter la requête
     $response = curl_exec($ch);
 
-    // Vérification des erreurs cURL
     if (curl_errno($ch)) {
         echo 'Erreur cURL: ' . curl_error($ch);
     }
 
-    // Fermer la session cURL
     curl_close($ch);
 
     return $response;
@@ -111,19 +92,15 @@ function getLatestHomeworks($studentId)
             LIMIT 3
         ";
 
-        // Préparation de la requête
         $stmt = $db->prepare($query);
         $stmt->bindParam(':studentId', $studentId, PDO::PARAM_INT);
 
-        // Exécution de la requête
         $stmt->execute();
 
-        // Récupération des résultats
         $homeworks = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         return $homeworks;
     } catch (PDOException $e) {
-        // Gestion des erreurs
         die("Erreur : " . $e->getMessage());
     }
 }
@@ -147,19 +124,15 @@ function getStudentsHomeworks($studentId)
             ORDER BY d.date ASC
         ";
 
-        // Préparation de la requête
         $stmt = $db->prepare($query);
         $stmt->bindParam(':studentId', $studentId, PDO::PARAM_INT);
 
-        // Exécution de la requête
         $stmt->execute();
 
-        // Récupération des résultats
         $homeworks = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         return $homeworks;
     } catch (PDOException $e) {
-        // Gestion des erreurs
         die("Erreur : " . $e->getMessage());
     }
 }
@@ -237,7 +210,7 @@ function getAbsences($studentId)
             FROM absence a
             WHERE a.id_etudiant = :studentId
             ORDER BY a.date DESC, a.debut DESC
-            LIMIT 3
+            LIMIT 2
         ";
 
         $stmt = $db->prepare($query);
@@ -251,8 +224,8 @@ function getAbsences($studentId)
     }
 }
 
-// Fonction pour récupérer les notes d'un étudiant
-function getGrades($studentId)
+// Fonction pour récupérer les trois dernières notes d'un étudiant
+function getLatestGrades($studentId)
 {
     try {
         $db = dbConnect();
@@ -281,6 +254,35 @@ function getGrades($studentId)
     }
 }
 
+// Fonction pour récupérer toutes les notes d'un étudiant
+function getGrades($studentId)
+{
+    try {
+        $db = dbConnect();
+        $query = "
+        SELECT 
+            n.id_note, 
+            n.date_note, 
+            n.note, 
+            n.note_max, 
+            n.titre, 
+            m.titre AS module_titre
+        FROM note n
+        JOIN module m ON n.id_module = m.id_module
+        WHERE n.id_etudiant = :studentId
+        ORDER BY n.date_note DESC
+        ";
+        $stmt = $db->prepare($query);
+        $stmt->bindParam(':studentId', $studentId, PDO::PARAM_INT);
+        $stmt->execute();
+        $grades = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return $grades;
+    } catch (PDOException $e) {
+        die("Erreur : " . $e->getMessage());
+    }
+}
+
 // Fonction pour récupérer les infos des profs pour l'annuaire
 function getTeachers()
 {
@@ -288,7 +290,7 @@ function getTeachers()
         $db = dbConnect();
         $query = "
             SELECT 
-            id_professeur, 
+            id, 
             nom, 
             prenom, 
             email, 
@@ -338,7 +340,7 @@ function getCourse($id)
             p.nom AS prof_nom,
             p.prenom AS prof_prenom
         FROM module m
-        JOIN professeur p ON m.id_professeur = p.id_professeur
+        JOIN professeur p ON m.id_professeur = p.id
         WHERE id_module = :id
         ";
         $stmt = $db->prepare($query);
@@ -372,3 +374,69 @@ function getCourseFiles($id)
         die("Erreur : " . $e->getMessage());
     }
 }
+
+// Fonction pour récupérer les infos d'un utilisateur
+function getUser() {
+    try {
+        $db = dbConnect();
+        $query = "
+        SELECT * FROM etudiant WHERE id = :id";
+        $stmt = $db->prepare($query);
+        $stmt->bindParam(':id', $_SESSION['user_id'], PDO::PARAM_INT);
+        $stmt->execute();
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $user;
+    } catch (PDOException $e) {
+        die("Erreur : " . $e->getMessage());
+    }
+}
+
+function updateProfilePicture($file, $role, $userId) {
+    $uploadDir = 'public/uploads/profile-pictures/';
+    $roleDir = ($role === 'teacher') ? 'teachers/' : 'students/';
+    $uploadPath = $uploadDir . $roleDir . $userId;
+
+    if (!is_dir($uploadDir . $roleDir)) {
+        if (!mkdir($uploadDir . $roleDir, 0777, true)) {
+            return "Erreur lors de la création du dossier de destination.";
+        }
+    }
+
+    $allowedExtensions = ['jpeg', 'jpg', 'png', 'webp', 'heic', 'heif'];
+    $fileInfo = pathinfo($file['name']);
+    $fileExtension = strtolower($fileInfo['extension']);
+
+    if (!in_array($fileExtension, $allowedExtensions)) {
+        return "Type de fichier non autorisé. Seules les images JPEG, PNG, JPG, WEBP, et HEIC sont acceptées.";
+    }
+
+    $existingFilePathToKeep = null;
+    foreach ($allowedExtensions as $ext) {
+        $existingFilePath = $uploadPath . '.' . $ext;
+        if (file_exists($existingFilePath)) {
+            $existingFilePathToKeep = $existingFilePath; 
+            break;
+        }
+    }
+
+    $uploadFilePath = $uploadPath . '.' . $fileExtension;
+    if (isset($existingFilePathToKeep) && file_exists($existingFilePathToKeep)) {
+
+        if ($existingFilePathToKeep === $uploadFilePath) {
+            return true;  
+        }
+    }
+
+    if (!move_uploaded_file($file['tmp_name'], $uploadFilePath)) {
+        return "Erreur lors du téléchargement.";
+    }
+
+    if (isset($existingFilePathToKeep) && file_exists($existingFilePathToKeep)) {
+        unlink($existingFilePathToKeep);
+    }
+
+    return true;
+}
+
+
+

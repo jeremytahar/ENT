@@ -120,6 +120,8 @@ function setupSearch(inputSelector, itemSelector, messageSelector, getSearchText
 
         items.forEach(item => {
             const itemText = removeAccents(getSearchText(item).toLowerCase());
+
+            
             if (itemText.includes(searchValue)) {
                 item.style.display = '';
                 hasVisibleItem = true;
@@ -154,3 +156,71 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+
+// Fonction pour ouvrir et fermer les modules des notes
+function toggleModule(event) {
+    const moduleHeader = event.currentTarget;
+    const content = moduleHeader.nextElementSibling;
+    const arrow = moduleHeader.querySelector(".arrow");
+
+    if (content.classList.contains("hidden")) {
+        content.classList.remove("hidden");
+        arrow.style.transform = "rotate(0deg)";
+    } else {
+        content.classList.add("hidden");
+        arrow.style.transform = "rotate(-90deg)";
+    }
+}
+
+document.querySelectorAll(".module-header").forEach(header => {
+    header.addEventListener("click", toggleModule);
+});
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    const modules = document.querySelectorAll(".module");
+    let totalModuleAverages = 0;
+    let moduleCount = 0;
+
+    modules.forEach(module => {
+        const rows = module.querySelectorAll(".items-table .score");
+        let totalNotes = 0;
+        let totalMax = 0;
+
+        rows.forEach(row => {
+            const score = row.textContent.split('/');
+            const note = parseFloat(score[0]);
+            const max = parseFloat(score[1]);
+            if (!isNaN(note) && !isNaN(max)) {
+                totalNotes += note;
+                totalMax += max;
+            }
+        });
+
+        const average = totalMax > 0 ? ((totalNotes / totalMax) * 20).toFixed(2) : 0;
+
+        const averageElement = module.querySelector(".average");
+        if (averageElement) {
+            averageElement.textContent = `${average}/20`;
+        }
+
+        if (average > 0) {
+            totalModuleAverages += parseFloat(average);
+            moduleCount++;
+        }
+    });
+
+    const generalAverage = moduleCount > 0 ? (totalModuleAverages / moduleCount).toFixed(2) : 0;
+
+    const generalAverageElement = document.querySelector(".general-average-grade");
+    if (generalAverageElement) {
+        generalAverageElement.textContent = `${generalAverage}/20`;
+    }
+});
+
+document.getElementById('profile-picture').addEventListener('change', function () {
+    document.getElementById('profile-form').submit();
+});
+
+
+  
