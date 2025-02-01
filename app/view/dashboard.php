@@ -3,6 +3,7 @@
         <a href="?action=home">Accueil</a> > <span>Tableau de bord</span>
     </div>
     </div>
+    <?php if ($_SESSION['user_role'] === 'etudiant'): ?>
     <div class="homework-tests">
         <div class="homework">
             <h2>Devoirs à rendre</h2>
@@ -41,6 +42,7 @@
             </div>
         </div>
     </div>
+    <?php endif; ?>
     <div class="search-courses">
         <div class="form-group">
             <input type="text" class="search-bar" id="searchInput" placeholder="Rechercher" />

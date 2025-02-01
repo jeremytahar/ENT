@@ -42,9 +42,10 @@
             </div>
         </div>
     <?php endif; ?>
-    <img src="public/img/calendar-mobile.svg" alt="" class="calendar-img calendar-mobile">
-    <img src="public/img/calendar-tablet.svg" alt="" class="calendar-img calendar-tablet">
-    <img src="public/img/calendar-desktop.svg" alt="" class="calendar-img calendar-desktop">
+    <img src="public/img/calendars/calendar-mobile.svg" alt="" class="calendar-img calendar-mobile">
+    <img src="public/img/calendars/calendar-tablet.svg" alt="" class="calendar-img calendar-tablet">
+    <img src="public/img/calendars/calendar-desktop.svg" alt="" class="calendar-img calendar-desktop">
+    <?php if($_SESSION['user_role'] === 'etudiant'): ?>
     <div class="homepage-grades">
         <h2>Dernières notes</h2>
         <table>
@@ -78,11 +79,11 @@
                     <tr>
                         <td colspan="4">Aucune note disponible.</td>
                     </tr>
-                <?php endif;
-                ?>
+                <?php endif; ?>
             </tbody>
         </table>
         <a href="?action=grades" class="view-more">Voir plus</a>
     </div>
+    <?php endif; ?>
 
 </main>

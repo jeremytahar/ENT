@@ -1,0 +1,11 @@
+RewriteEngine On
+
+# Interdire l'accès direct aux dossiers app/view, app/config, app/model
+RewriteRule (^|/)app/(view|config|model)(/|$) - [F]
+
+# Interdire l'accès direct aux dossiers publics spécifiques, mais autoriser les requêtes depuis le site
+RewriteCond %{REQUEST_URI} ^/public/(scripts|styles|img|uploads/profile-pictures|fonts)/ [NC]
+RewriteRule (^|/)public/(scripts|styles|img|uploads/profile-pictures|fonts)(/|$) - [F]
+
+# Désactiver l'indexation des répertoires
+Options -Indexes
