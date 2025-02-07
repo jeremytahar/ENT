@@ -3,10 +3,6 @@ https://jeremytahar.fr/ent
 
 # Identifiants de test 
 
-## Professeur
-- Login : gaelle.charpentier
-- Mot de passe : mdp
-
 ## Élève
 - Login : jeremy.tahar
 - Mot de passe : mdp
